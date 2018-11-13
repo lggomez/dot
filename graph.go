@@ -164,11 +164,10 @@ func (g Graph) IndentedWrite(w *IndentWriter) {
 		for _, all := range g.edgesFrom {
 			for _, each := range all {
 				if g.graphType == Undirected.Name {
-				       fmt.Fprintf(w, "n%d--n%d", each.from.seq, each.to.seq)
+					fmt.Fprintf(w, "n%d--n%d", each.from.seq, each.to.seq)
 				} else {
-				       fmt.Fprintf(w, "n%d->n%d", each.from.seq, each.to.seq)
+					fmt.Fprintf(w, "n%d->n%d", each.from.seq, each.to.seq)
 				}
-				fmt.Fprintf(w, "n%d->n%d", each.from.seq, each.to.seq)
 				appendSortedMap(each.attributes, true, w)
 				fmt.Fprint(w, ";")
 				w.NewLine()
