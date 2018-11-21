@@ -146,23 +146,42 @@ func (g Graph) IndentedWrite(w *IndentWriter) {
 			fmt.Fprintf(w, "ID = %q;", g.id)
 			w.NewLine()
 		}
+
 		// subgraphs
-		for _, each := range g.subgraphs {
-			each.IndentedWrite(w)
+		subGraphKeys := make([]string, 0, len(g.subgraphs))
+		for key := range g.subgraphs {
+			subGraphKeys = append(subGraphKeys, key)
 		}
+		sort.Strings(subGraphKeys)
+		for _, key := range subGraphKeys {
+			g.subgraphs[key].IndentedWrite(w)
+		}
+
 		// graph attributes
 		appendSortedMap(g.AttributesMap.attributes, false, w)
 		w.NewLine()
+
 		// graph nodes
-		for _, each := range g.nodes {
+		nodeKeys := make([]string, 0, len(g.nodes))
+		for key := range g.nodes {
+			nodeKeys = append(nodeKeys, key)
+		}
+		sort.Strings(nodeKeys)
+		for _, key := range nodeKeys {
 			fmt.Fprintf(w, "node")
-			appendSortedMap(each.attributes, true, w)
-			fmt.Fprintf(w, " n%d;", each.seq)
+			appendSortedMap(g.nodes[key].attributes, true, w)
+			fmt.Fprintf(w, " n%d;", g.nodes[key].seq)
 			w.NewLine()
 		}
+
 		// graph edges
-		for _, all := range g.edgesFrom {
-			for _, each := range all {
+		edgesFromKeys := make([]string, 0, len(g.edgesFrom))
+		for key := range g.edgesFrom {
+			edgesFromKeys = append(edgesFromKeys, key)
+		}
+		sort.Strings(edgesFromKeys)
+		for _, fromKey := range edgesFromKeys {
+			for _, each := range g.edgesFrom[fromKey] {
 				if g.graphType == Undirected.Name {
 					fmt.Fprintf(w, "n%d--n%d", each.from.seq, each.to.seq)
 				} else {
@@ -185,13 +204,17 @@ func appendSortedMap(m map[string]interface{}, mustBracket bool, b io.Writer) {
 		fmt.Fprint(b, "[")
 	}
 	first := true
+
 	// first collect keys
 	keys := []string{}
 	for k := range m {
 		keys = append(keys, k)
 	}
+
+	// sort
 	sort.StringSlice(keys).Sort()
 
+	// build
 	for _, k := range keys {
 		if !first {
 			if mustBracket {
