@@ -1,3 +1,7 @@
+**NOTE:** This fork includes the following fixes/changes:
+- Emit the correct edge syntax por undirected (graph) types
+- Emit the graph information in a deterministic way (traverse maps by ordered keys)
+
 ## dot - little helper package in Go for the graphviz dot language
 
 [DOT language](http://www.graphviz.org/doc/info/lang.html)
